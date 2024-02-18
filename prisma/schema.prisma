@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Uses connection pooling
+  url = env("POSTGRES_PRISMA_URL")
+  // Uses direct connection, ⚠️ make sure to keep this to `POSTGRES_URL_NON_POOLING`
+  // or you'll have dangling databases from migrations
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Task {
+  id            String        @id @default (uuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  createdAt     DateTime      @default (now())
+  dueDate       DateTime
+  isComplete    Boolean
+  title         String
+  description   String
+  data          Json
+  comprehension Comprehension
+}
+
+// model Calendar {
+//   id        String @id @default (uuid())
+//   // user      User     @relation(fields: [userId], references: [id])
+//   createdAt DateTime @default (now())
+//   updatedAt DateTime @updatedAt
+//   title     String
+//   description String
+//   tasks Task[] @relation(references: [id])
+// }
+
+// model Dashboard {
+//   id        String @id @default (uuid())
+//   // user      User     @relation(fields: [userId], references: [id])
+//   calendar Calendar[] @relation(references: [id])
+//   tasks Task[]  
+// }
+
+
+model User {
+  id        String   @id @default (uuid())
+  createdAt DateTime @default (now())
+  updatedAt DateTime @updatedAt
+  userName  String
+  email     String
+  password  String
+  tasks     Task[]
+  }
+
+  enum Comprehension {
+  Skimmed
+  Repeated
+  Grasped
+  Memorized
+  Mastered
+  }
